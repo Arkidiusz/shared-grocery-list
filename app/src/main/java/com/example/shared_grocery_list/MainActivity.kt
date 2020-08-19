@@ -1,4 +1,4 @@
-package com.example.sharedgrocerylist
+package com.example.shared_grocery_list
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

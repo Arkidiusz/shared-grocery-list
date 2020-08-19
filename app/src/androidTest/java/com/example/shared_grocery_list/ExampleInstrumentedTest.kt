@@ -1,4 +1,4 @@
-package com.example.sharedgrocerylist
+package com.example.shared_grocery_list
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.example.sharedgrocerylist
+package com.example.shared_grocery_list
 
 import org.junit.Test
 
