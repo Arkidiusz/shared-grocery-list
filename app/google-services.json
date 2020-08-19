@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "367576005709",
+    "firebase_url": "https://shared-grocery-list-5cece.firebaseio.com",
+    "project_id": "shared-grocery-list-5cece",
+    "storage_bucket": "shared-grocery-list-5cece.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367576005709:android:07b313de8533656b8d7004",
+        "android_client_info": {
+          "package_name": "com.example.sharedgrocerylist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367576005709-avn031g9mhnesaa6djijn328b8cj27v9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGHAzNLnym8LDQBUyniJY6lEJBqdTngdc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367576005709-avn031g9mhnesaa6djijn328b8cj27v9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
