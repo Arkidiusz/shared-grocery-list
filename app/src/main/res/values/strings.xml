@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Shared Grocery List</string>
+    <string name="main_register">REGISTER</string>
+    <string name="main_already_registered">Already Registered?</string>
+    <string name="main_email">Email</string>
+    <string name="main_password">Password</string>
 </resources>
