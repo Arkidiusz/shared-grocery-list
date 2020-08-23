@@ -8,6 +8,7 @@ import com.example.shared_grocery_list.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -95,9 +96,15 @@ class MainActivity : AppCompatActivity() {
     private fun createAccount(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
+                var user = auth.currentUser
+                while (user == null) {
+                    user = auth.currentUser
+                }
+                FirebaseDatabase.getInstance().reference.child("users/${user.uid}/email/")
+                    .setValue(email)
                 Toast.makeText(baseContext, "Registration successful.", Toast.LENGTH_SHORT)
                     .show()
-                startListActivity(auth.currentUser)
+                startListActivity(user)
             } else {
                 Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT)
                     .show()
