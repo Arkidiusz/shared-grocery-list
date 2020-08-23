@@ -6,4 +6,9 @@
     <string name="main_password">Password</string>
     <string name="main_login">login</string>
     <string name="main_no_account">Don\'t have an account?</string>
+    <string name="list_buy">Buy Selected Items</string>
+    <string name="list_add_person">Add User</string>
+    <string name="list_add_item">Add Item</string>
+    <string name="add_grocery_item">Grocery Item</string>
+    <string name="add_to_list">Add To Shopping List</string>
 </resources>

@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     public override fun onStart() {
         super.onStart()
         val user = auth.currentUser
-//        if(user != null) startListActivity(auth.currentUser)
+        if (user != null) startListActivity(auth.currentUser)
     }
 
     private fun validateRegistrationForm(): Boolean {
