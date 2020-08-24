@@ -30,10 +30,12 @@ class ListActivity : AppCompatActivity() {
         else {
             this.user = user
 
+            // RecyclerView of grocery items
             val recyclerAdapter = RecyclerAdapter()
             rv_your_grocery.adapter = recyclerAdapter
             rv_your_grocery.layoutManager = LinearLayoutManager(this)
 
+            // Listener for fetching grocery items from database
             FirebaseDatabase.getInstance().reference.child("users").child(user.uid).child("items")
                 .addChildEventListener(object : ChildEventListener {
                     override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -43,6 +45,7 @@ class ListActivity : AppCompatActivity() {
                             for (groceryItem in groceryList) {
                                 if (groceryItem.id == itemID) {
                                     groceryList.remove(groceryItem)
+                                    recyclerAdapter.notifyDataSetChanged()
                                     break
                                 }
                             }
@@ -73,6 +76,18 @@ class ListActivity : AppCompatActivity() {
                     }
                 })
 
+            // Remove selected exercises on button press
+            btn_buy.setOnClickListener {
+                for (viewHolder in recyclerAdapter.allViewHolders) {
+                    val cbGroceryItem = viewHolder.cbGroceryItem
+                    if (cbGroceryItem.isChecked) {
+                        val groceryID = viewHolder.groceryID
+                        Log.d("Removing value", groceryID)
+                        FirebaseDatabase.getInstance().reference.child("users")
+                            .child(user.uid).child("items").child(groceryID).removeValue()
+                    }
+                }
+            }
         }
     }
 
@@ -91,25 +106,33 @@ class ListActivity : AppCompatActivity() {
     }
 
     inner class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.RecyclerHolder>() {
+        val allViewHolders = ArrayList<RecyclerHolder>()
 
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
         ): RecyclerAdapter.RecyclerHolder {
             val inflater = LayoutInflater.from(parent.context)
-            return RecyclerHolder(inflater.inflate(R.layout.item_grocery_item, parent, false))
+            val recyclerHolder =
+                RecyclerHolder(inflater.inflate(R.layout.item_grocery_item, parent, false))
+            allViewHolders.add(recyclerHolder)
+            return recyclerHolder
         }
-
         override fun getItemCount(): Int {
             return groceryList.size
         }
 
         override fun onBindViewHolder(holder: RecyclerAdapter.RecyclerHolder, position: Int) {
-            holder.cbGroceryItem.text = groceryList[position].name
+            val groceryItem = groceryList[position]
+            val cbGroceryItem = holder.cbGroceryItem
+            cbGroceryItem.text = groceryItem.name
+            cbGroceryItem.isChecked = false
+            holder.groceryID = groceryItem.id
         }
 
         inner class RecyclerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val cbGroceryItem: CheckBox = itemView.cb_grocery_item
+            lateinit var groceryID: String // This is set in onBindViewHolder()
         }
     }
 }
