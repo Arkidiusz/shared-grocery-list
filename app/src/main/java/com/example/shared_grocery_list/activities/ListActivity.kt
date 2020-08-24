@@ -40,7 +40,6 @@ class ListActivity : AppCompatActivity() {
                 .addChildEventListener(object : ChildEventListener {
                     override fun onChildRemoved(snapshot: DataSnapshot) {
                         val itemID = snapshot.key
-                        val itemName = snapshot.value.toString()
                         if (itemID != null) {
                             for (groceryItem in groceryList) {
                                 if (groceryItem.id == itemID) {
@@ -99,9 +98,15 @@ class ListActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
-        intent = Intent(this, AddItemActivity::class.java)
-        intent.putExtra("uid", user.uid)
-        startActivity(intent)
+        val intent = when (item.itemId) {
+            R.id.btn_add_grocery_menu -> Intent(this, AddItemActivity::class.java)
+            R.id.btn_add_friend_menu -> Intent(this, AddFriendActivity::class.java)
+            else -> null
+        }
+        if (intent != null) {
+            intent.putExtra("uid", user.uid)
+            startActivity(intent)
+        }
         return true
     }
 

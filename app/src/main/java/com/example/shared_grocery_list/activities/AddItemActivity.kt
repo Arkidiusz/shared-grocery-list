@@ -13,10 +13,10 @@ class AddItemActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_item)
 
         // Add grocery item to the database
-        btn_add_grocery.setOnClickListener {
+        btn_add_friend_menu.setOnClickListener {
             val uid = intent.getStringExtra("uid")
             if (uid != null) {
-                val itemName = et_grocery_item.text.toString()
+                val itemName = et_grocery_item_name.text.toString()
                 if (itemName.isEmpty()) {
                     Toast.makeText(
                         this, "Please specify grocery item name.",
@@ -26,7 +26,7 @@ class AddItemActivity : AppCompatActivity() {
                     val dbRootRef = FirebaseDatabase.getInstance().reference
                     dbRootRef.child("users").child(uid).child("items").push()
                         .setValue(itemName)
-                    et_grocery_item.text.clear()
+                    et_grocery_item_name.text.clear()
                 }
             } else finish() //TODO inform user of what happened
         }
