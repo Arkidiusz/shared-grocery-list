@@ -26,6 +26,7 @@ class AddItemActivity : AppCompatActivity() {
                     val dbRootRef = FirebaseDatabase.getInstance().reference
                     dbRootRef.child("users").child(uid).child("items").push()
                         .setValue(itemName)
+                    et_grocery_item.text.clear()
                 }
             } else finish() //TODO inform user of what happened
         }
