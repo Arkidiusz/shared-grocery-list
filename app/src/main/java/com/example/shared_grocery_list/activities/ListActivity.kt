@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.*
 import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shared_grocery_list.R
@@ -34,6 +36,10 @@ class ListActivity : AppCompatActivity() {
             val recyclerAdapter = RecyclerAdapter()
             rv_your_grocery.adapter = recyclerAdapter
             rv_your_grocery.layoutManager = LinearLayoutManager(this)
+            val dividerDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+            val drawable = ContextCompat.getDrawable(this, R.drawable.line_divider_decoration)
+            if (drawable != null) dividerDecoration.setDrawable(drawable)
+            rv_your_grocery.addItemDecoration(dividerDecoration)
 
             // Listener for fetching grocery items from database
             FirebaseDatabase.getInstance().reference.child("users").child(user.uid).child("items")
