@@ -10,10 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shared_grocery_list.R
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.item_grocery_item.view.*
 
@@ -38,7 +35,7 @@ class ListActivity : AppCompatActivity() {
             val expandableListAdapter = ExpandableListAdapter(this, listTitles, groceryLists)
             expandable_list_view.setAdapter(expandableListAdapter)
 
-            // Listener for fetching grocery items from database
+            // Listener for fetching user's grocery items from database
             FirebaseDatabase.getInstance().reference.child("users").child(user.uid).child("items")
                 .addChildEventListener(object : ChildEventListener {
 
@@ -61,6 +58,7 @@ class ListActivity : AppCompatActivity() {
                         if (itemID != null) {
                             val groceryItem = GroceryItem(itemID, itemName)
                             yourGroceryItems.add(groceryItem)
+                            expandableListAdapter.allChildParents[itemID] = user.uid
                             expandableListAdapter.notifyDataSetChanged()
                         }
                     }
@@ -77,10 +75,80 @@ class ListActivity : AppCompatActivity() {
                     }
                 })
 
+            // Listeners for fetching friends' grocery items from database
+            FirebaseDatabase.getInstance().reference.child("users").child(user.uid).child("friends")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d("onCancelled", error.message)
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (friend in snapshot.children) {
+                            Log.d("friend", "${friend.key} --- ${friend.value}")
+                            val friendID = friend.key
+                            val friendEmail = friend.value
+                            if (friendID != null && friendEmail != null) {
+                                listTitles.add("$friendEmail's grocery list")
+                                val friendGroceryList = ArrayList<GroceryItem>()
+                                groceryLists.add(friendGroceryList)
+                                FirebaseDatabase.getInstance().reference.child("users")
+                                    .child(friendID).child("items")
+                                    .addChildEventListener(object : ChildEventListener {
+                                        override fun onCancelled(error: DatabaseError) {
+                                            Log.d("onCancelled", error.message)
+                                        }
+
+                                        override fun onChildMoved(
+                                            snapshot: DataSnapshot,
+                                            previousChildName: String?
+                                        ) {
+                                        }
+
+                                        override fun onChildChanged(
+                                            snapshot: DataSnapshot,
+                                            previousChildName: String?
+                                        ) {
+                                        }
+
+                                        override fun onChildAdded(
+                                            snapshot: DataSnapshot,
+                                            previousChildName: String?
+                                        ) {
+                                            val itemID = snapshot.key
+                                            val itemName = snapshot.value.toString()
+                                            if (itemID != null) {
+                                                val groceryItem = GroceryItem(itemID, itemName)
+                                                friendGroceryList.add(groceryItem)
+                                                expandableListAdapter.allChildParents[itemID] =
+                                                    friendID
+                                                expandableListAdapter.notifyDataSetChanged()
+                                            }
+                                        }
+
+                                        override fun onChildRemoved(snapshot: DataSnapshot) {
+                                            val itemID = snapshot.key
+                                            if (itemID != null) {
+                                                for (groceryItem in friendGroceryList) {
+                                                    if (groceryItem.id == itemID) {
+                                                        friendGroceryList.remove(groceryItem)
+                                                        expandableListAdapter.notifyDataSetChanged()
+                                                        break
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                            }
+                        }
+                    }
+                })
+
             // Remove selected exercises on button press
             btn_buy.setOnClickListener {
                 val toBeRemoved = ArrayList<String>()
+                Log.d("---------", "------------")
                 for ((id, view) in expandableListAdapter.allChildViews) {
+                    Log.d("childView", "${id} --- ${view.cb_grocery_item.text}")
                     if (view.cb_grocery_item.isChecked) {
                         toBeRemoved.add(id)
                     }
@@ -116,6 +184,7 @@ class ListActivity : AppCompatActivity() {
         var body: MutableList<MutableList<GroceryItem>>
     ) : BaseExpandableListAdapter() {
         val allChildViews = HashMap<String, View>()
+        val allChildParents = HashMap<String, String>()
 
         override fun getGroup(groupPosition: Int): String {
             return header[groupPosition]
@@ -191,7 +260,9 @@ class ListActivity : AppCompatActivity() {
         fun removeChildFromMap(id: String) {
             allChildViews.remove(id)
             FirebaseDatabase.getInstance().reference.child("users")
-                .child(user.uid).child("items").child(id).removeValue()
+                .child(allChildParents[id].toString()).child("items").child(id).removeValue()
+            allChildParents.remove(id)
+            // TODO danger allChildParents[id] can return null
         }
     }
 }
