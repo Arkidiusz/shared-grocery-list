@@ -1,15 +1,13 @@
 package com.example.shared_grocery_list.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.CheckBox
+import android.widget.BaseExpandableListAdapter
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.shared_grocery_list.R
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ChildEventListener
@@ -21,40 +19,39 @@ import kotlinx.android.synthetic.main.item_grocery_item.view.*
 
 class ListActivity : AppCompatActivity() {
     private lateinit var user: FirebaseUser
-    val groceryList = ArrayList<GroceryItem>()
+    private val listTitles: MutableList<String> = ArrayList()
+    private val groceryLists: MutableList<MutableList<GroceryItem>> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
+
         val user = intent.getParcelableExtra<FirebaseUser>("user")
-        if (user == null)
-            finish()
+        if (user == null) finish()
         else {
             this.user = user
 
-            // RecyclerView of grocery items
-            val recyclerAdapter = RecyclerAdapter()
-            rv_your_grocery.adapter = recyclerAdapter
-            rv_your_grocery.layoutManager = LinearLayoutManager(this)
-            val dividerDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-            val drawable = ContextCompat.getDrawable(this, R.drawable.line_divider_decoration)
-            if (drawable != null) dividerDecoration.setDrawable(drawable)
-            rv_your_grocery.addItemDecoration(dividerDecoration)
+            // Setup expandableListAdapter of grocery lists
+            listTitles.add("Your grocery items")
+            val yourGroceryItems: MutableList<GroceryItem> = ArrayList()
+            groceryLists.add(yourGroceryItems)
+            val expandableListAdapter = ExpandableListAdapter(this, listTitles, groceryLists)
+            expandable_list_view.setAdapter(expandableListAdapter)
 
             // Listener for fetching grocery items from database
             FirebaseDatabase.getInstance().reference.child("users").child(user.uid).child("items")
                 .addChildEventListener(object : ChildEventListener {
+
                     override fun onChildRemoved(snapshot: DataSnapshot) {
                         val itemID = snapshot.key
                         if (itemID != null) {
-                            for (groceryItem in groceryList) {
+                            for (groceryItem in yourGroceryItems) {
                                 if (groceryItem.id == itemID) {
-                                    groceryList.remove(groceryItem)
-                                    recyclerAdapter.notifyDataSetChanged()
+                                    yourGroceryItems.remove(groceryItem)
+                                    expandableListAdapter.notifyDataSetChanged()
                                     break
                                 }
                             }
-                            Log.d("Child Removed", "${snapshot.key} | ${snapshot.value}")
                         }
                     }
 
@@ -63,9 +60,8 @@ class ListActivity : AppCompatActivity() {
                         val itemName = snapshot.value.toString()
                         if (itemID != null) {
                             val groceryItem = GroceryItem(itemID, itemName)
-                            groceryList.add(groceryItem)
-                            recyclerAdapter.notifyDataSetChanged()
-                            Log.d("Child Added", "${snapshot.key} | ${snapshot.value}")
+                            yourGroceryItems.add(groceryItem)
+                            expandableListAdapter.notifyDataSetChanged()
                         }
                     }
 
@@ -83,15 +79,13 @@ class ListActivity : AppCompatActivity() {
 
             // Remove selected exercises on button press
             btn_buy.setOnClickListener {
-                for (viewHolder in recyclerAdapter.allViewHolders) {
-                    val cbGroceryItem = viewHolder.cbGroceryItem
-                    if (cbGroceryItem.isChecked) {
-                        val groceryID = viewHolder.groceryID
-                        Log.d("Removing value", groceryID)
-                        FirebaseDatabase.getInstance().reference.child("users")
-                            .child(user.uid).child("items").child(groceryID).removeValue()
+                val toBeRemoved = ArrayList<String>()
+                for ((id, view) in expandableListAdapter.allChildViews) {
+                    if (view.cb_grocery_item.isChecked) {
+                        toBeRemoved.add(id)
                     }
                 }
+                for (position in toBeRemoved) expandableListAdapter.removeChildFromMap(position)
             }
         }
     }
@@ -116,34 +110,88 @@ class ListActivity : AppCompatActivity() {
         return true
     }
 
-    inner class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.RecyclerHolder>() {
-        val allViewHolders = ArrayList<RecyclerHolder>()
+    inner class ExpandableListAdapter(
+        var context: Context,
+        var header: MutableList<String>,
+        var body: MutableList<MutableList<GroceryItem>>
+    ) : BaseExpandableListAdapter() {
+        val allChildViews = HashMap<String, View>()
 
-        override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
-        ): RecyclerAdapter.RecyclerHolder {
-            val inflater = LayoutInflater.from(parent.context)
-            val recyclerHolder =
-                RecyclerHolder(inflater.inflate(R.layout.item_grocery_item, parent, false))
-            allViewHolders.add(recyclerHolder)
-            return recyclerHolder
-        }
-        override fun getItemCount(): Int {
-            return groceryList.size
+        override fun getGroup(groupPosition: Int): String {
+            return header[groupPosition]
         }
 
-        override fun onBindViewHolder(holder: RecyclerAdapter.RecyclerHolder, position: Int) {
-            val groceryItem = groceryList[position]
-            val cbGroceryItem = holder.cbGroceryItem
-            cbGroceryItem.text = groceryItem.name
-            cbGroceryItem.isChecked = false
-            holder.groceryID = groceryItem.id
+        override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
+            return true
         }
 
-        inner class RecyclerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val cbGroceryItem: CheckBox = itemView.cb_grocery_item
-            lateinit var groceryID: String // This is set in onBindViewHolder()
+        override fun hasStableIds(): Boolean {
+            return false
+        }
+
+        override fun getGroupView(
+            groupPosition: Int,
+            isExpanded: Boolean,
+            convertView: View?,
+            parent: ViewGroup?
+        ): View {
+            var convertViewVar = convertView
+            if (convertViewVar == null) {
+                val inflater =
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                convertViewVar = inflater.inflate(R.layout.item_list_friend, null)
+            }
+            val title = convertViewVar!!.findViewById<TextView>(R.id.textView)
+            title.text = getGroup(groupPosition)
+
+            return convertViewVar
+        }
+
+        override fun getChildrenCount(groupPosition: Int): Int {
+            return body[groupPosition].size
+        }
+
+        override fun getChild(groupPosition: Int, childPosition: Int): GroceryItem {
+            return body[groupPosition][childPosition]
+        }
+
+        override fun getGroupId(groupPosition: Int): Long {
+            return groupPosition.toLong()
+        }
+
+        override fun getChildView(
+            groupPosition: Int,
+            childPosition: Int,
+            isLastChild: Boolean,
+            convertView: View?,
+            parent: ViewGroup?
+        ): View {
+            var convertViewVar = convertView
+            if (convertViewVar == null) {
+                val inflater =
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                convertViewVar = inflater.inflate(R.layout.item_grocery_item, null)
+            }
+            val cbGroceryItem = convertViewVar!!.findViewById<TextView>(R.id.cb_grocery_item)
+            cbGroceryItem.text = getChild(groupPosition, childPosition).name
+            allChildViews[getChild(groupPosition, childPosition).id] = convertViewVar
+
+            return convertViewVar
+        }
+
+        override fun getChildId(groupPosition: Int, childPosition: Int): Long {
+            return childPosition.toLong()
+        }
+
+        override fun getGroupCount(): Int {
+            return header.size
+        }
+
+        // Remove a childView from allChildViews and database
+        fun removeChildFromMap(id: String) {
+            allChildViews.remove(id)
+            FirebaseDatabase.getInstance().reference.child("users")
+                .child(user.uid).child("items").child(id).removeValue()
         }
     }
 }
