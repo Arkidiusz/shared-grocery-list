@@ -8,7 +8,6 @@ import com.example.shared_grocery_list.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -17,34 +16,21 @@ import kotlinx.android.synthetic.main.activity_main.*
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private var registering = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btn_register_or_login.setOnClickListener {
-            if (validateRegistrationForm()) {
-                val email = et_email.text.toString()
-                val password = et_password.text.toString()
-                if (registering) createAccount(email, password)
-                else signIn(email, password)
-            }
+        tv_login.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
-        tv_register_or_login.setOnClickListener {
-            if (registering) {
-                // switch to logging in
-                btn_register_or_login.text = getString(R.string.main_login)
-                tv_register_or_login.setText(R.string.main_no_account)
-                registering = false
-            } else {
-                // switch to registering
-                btn_register_or_login.text = getString(R.string.main_register)
-                tv_register_or_login.setText(R.string.main_already_registered)
-                registering = true
+        btn_login.setOnClickListener {
+            if (validateLoginForm()) {
+                val email = et_login_email.text.toString()
+                val password = et_login_password.text.toString()
+                signIn(email, password)
             }
-
         }
 
         auth = Firebase.auth
@@ -52,13 +38,13 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onStart() {
         super.onStart()
-        val user = auth.currentUser
-        if (user != null) startListActivity(auth.currentUser)
+//        val user = auth.currentUser
+////        if (user != null) startListActivity(auth.currentUser)
     }
 
-    private fun validateRegistrationForm(): Boolean {
-        val email = et_email.text.toString()
-        val password = et_password.text.toString()
+    private fun validateLoginForm(): Boolean {
+        val email = et_login_email.text.toString()
+        val password = et_login_password.text.toString()
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(
                 baseContext,
@@ -91,24 +77,5 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                 }
             }
-    }
-
-    private fun createAccount(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
-            if (task.isSuccessful) {
-                var user = auth.currentUser
-                while (user == null) {
-                    user = auth.currentUser
-                }
-                FirebaseDatabase.getInstance().reference.child("users/${user.uid}/email/")
-                    .setValue(email)
-                Toast.makeText(baseContext, "Registration successful.", Toast.LENGTH_SHORT)
-                    .show()
-                startListActivity(user)
-            } else {
-                Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
     }
 }
