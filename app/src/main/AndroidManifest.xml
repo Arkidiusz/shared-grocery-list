@@ -11,9 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".activities.RegisterActivity" />
-        <activity android:name=".activities.AddFriendActivity" />
-        <activity android:name=".activities.AddItemActivity" />
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:label="Sign Up" />
+        <activity
+            android:name=".activities.AddFriendActivity"
+            android:label="Add Friend" />
+        <activity
+            android:name=".activities.AddItemActivity"
+            android:label="Add grocery item" />
         <activity android:name=".activities.ListActivity" />
         <activity
             android:name=".activities.MainActivity"
