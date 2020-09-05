@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryLightColor"
+    android:background="@color/backgroundColor"
     tools:context="com.example.shared_grocery_list.activities.AddItemActivity">
 
     <Button
@@ -15,7 +15,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/primaryDarkColor"
+        android:background="@color/primaryColor"
         android:text="@string/add_to_friend_list"
         android:textColor="@color/primaryTextColor"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +36,7 @@
         android:inputType="textEmailAddress"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@color/primaryTextColor"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"

@@ -23,7 +23,7 @@
                 android:gravity="center"
                 android:text="@string/your_grocery_list"
                 android:textAlignment="center"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

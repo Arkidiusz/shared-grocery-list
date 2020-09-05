@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="#e8f5e9"
     tools:context=".activities.MainActivity">
 
     <Button
@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
-        android:background="@color/primaryDarkColor"
+        android:background="@color/primaryColor"
         android:text="@string/main_login"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="@+id/et_login_password"
@@ -28,13 +28,14 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:autofillHints=""
-        android:background="@color/primaryLightColor"
+        android:background="@android:color/white"
         android:ems="10"
         android:hint="@string/main_email"
         android:includeFontPadding="true"
         android:inputType="textEmailAddress"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,7 +47,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:background="@color/primaryLightColor"
+        android:background="@android:color/white"
         android:ems="10"
         android:hint="@string/main_password"
         android:importantForAutofill="no"
@@ -54,7 +55,7 @@
         android:inputType="textPassword"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@color/primaryTextColor"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_login_email" />
@@ -65,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/main_no_account"
-        android:textColor="@color/primaryTextColor"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />

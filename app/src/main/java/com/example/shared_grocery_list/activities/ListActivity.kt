@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.BaseExpandableListAdapter
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shared_grocery_list.R
@@ -256,8 +257,9 @@ class ListActivity : AppCompatActivity() {
                     context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 convertViewVar = inflater.inflate(R.layout.item_grocery_item, null)
             }
-            val cbGroceryItem = convertViewVar!!.findViewById<TextView>(R.id.cb_grocery_item)
+            val cbGroceryItem = convertViewVar!!.findViewById<CheckBox>(R.id.cb_grocery_item)
             cbGroceryItem.text = getChild(groupPosition, childPosition).name
+            cbGroceryItem.isChecked = false
             allChildViews[getChild(groupPosition, childPosition).id] = convertViewVar
 
             return convertViewVar

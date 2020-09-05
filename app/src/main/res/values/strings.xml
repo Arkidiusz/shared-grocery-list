@@ -12,7 +12,7 @@
     <string name="add_grocery_item">Grocery Item</string>
     <string name="add_to_list">Add To Shopping List</string>
     <string name="sample_grocery_item">Sample grocery item</string>
-    <string name="your_grocery_list">Your Grocery List</string>
+    <string name="your_grocery_list">Your list</string>
     <string name="add_to_friend_list">add to friend list</string>
     <string name="nickname">Nickname</string>
 </resources>

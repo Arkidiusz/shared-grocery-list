@@ -6,28 +6,12 @@
     android:layout_height="match_parent"
     tools:context="com.example.shared_grocery_list.activities.ListActivity">
 
-    <!--    <ImageView-->
-    <!--        android:id="@+id/imageView"-->
-    <!--        android:layout_width="48dp"-->
-    <!--        android:layout_height="48dp"-->
-    <!--        android:adjustViewBounds="false"-->
-    <!--        android:contentDescription="Your avatar"-->
-    <!--        android:cropToPadding="false"-->
-    <!--        android:fadeScrollbars="false"-->
-    <!--        android:scaleType="centerCrop"-->
-    <!--        android:scaleX="1"-->
-    <!--        android:scaleY="1"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        tools:srcCompat="@tools:sample/avatars" />-->
-
-
     <Button
         android:id="@+id/btn_buy"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/primaryDarkColor"
+        android:background="@color/primaryColor"
         android:drawableStart="@drawable/shopping_cart"
         android:drawableEnd="@drawable/shopping_cart"
         android:paddingStart="32dp"
@@ -42,7 +26,9 @@
         android:id="@+id/expandable_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/backgroundColor"
         android:childDivider="@drawable/line_divider_decoration"
+        android:groupIndicator="@drawable/group_indicator"
         app:layout_constraintBottom_toTopOf="@+id/btn_buy"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
