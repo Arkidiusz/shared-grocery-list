@@ -47,11 +47,10 @@ class AddFriendActivity : AppCompatActivity() {
                                             "$snapshotEmail added to friends list",
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        break
+                                        finish()
                                     }
                                 }
                             }
-
                             override fun onCancelled(error: DatabaseError) {}
                         })
                 }

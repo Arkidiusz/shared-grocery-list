@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onStart() {
         super.onStart()
+        // skip logging process if possible
         val user = auth.currentUser
         if (user != null) startListActivity(auth.currentUser)
     }
@@ -58,7 +59,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startListActivity(user: FirebaseUser?) {
-        // TODO possible issue with null user
         intent = Intent(this, ListActivity::class.java)
         intent.putExtra("user", user)
         startActivity(intent)

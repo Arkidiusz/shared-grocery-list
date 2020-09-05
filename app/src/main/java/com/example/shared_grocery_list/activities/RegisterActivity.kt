@@ -71,7 +71,6 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun startListActivity(user: FirebaseUser?) {
-        // TODO possible issue with null user
         intent = Intent(this, ListActivity::class.java)
         intent.putExtra("user", user)
         startActivity(intent)

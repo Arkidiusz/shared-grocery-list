@@ -7,12 +7,14 @@ import com.example.shared_grocery_list.R
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_item.*
 
+/**
+ * Activity for adding items to shopping list
+ */
 class AddItemActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_item)
 
-        // Add grocery item to the database
         btn_add_friend_menu.setOnClickListener {
             val uid = intent.getStringExtra("uid")
             if (uid != null) {
@@ -24,11 +26,10 @@ class AddItemActivity : AppCompatActivity() {
                     ).show()
                 } else {
                     val dbRootRef = FirebaseDatabase.getInstance().reference
-                    dbRootRef.child("users").child(uid).child("items").push()
-                        .setValue(itemName)
+                    dbRootRef.child("users/${uid}/items").push().setValue(itemName)
                     et_grocery_item_name.text.clear()
                 }
-            } else finish() //TODO inform user of what happened
+            } else finish()
         }
     }
 }

@@ -19,6 +19,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
+                android:buttonTint="@android:color/black"
                 android:checked="false"
                 android:text="@string/sample_grocery_item"
                 android:textColor="@android:color/black"
