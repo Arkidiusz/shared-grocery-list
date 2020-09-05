@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".activities.RegisterActivity"></activity>
+        <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.AddFriendActivity" />
         <activity android:name=".activities.AddItemActivity" />
         <activity android:name=".activities.ListActivity" />

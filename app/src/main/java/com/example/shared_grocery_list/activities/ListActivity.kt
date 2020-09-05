@@ -88,7 +88,22 @@ class ListActivity : AppCompatActivity() {
                             val friendID = friend.key
                             val friendEmail = friend.value
                             if (friendID != null && friendEmail != null) {
-                                listTitles.add("$friendEmail's grocery list")
+
+                                // Fetch friend's' nickname and set it as a list title
+                                FirebaseDatabase.getInstance().reference.child("users")
+                                    .child(friendID).child("nickname")
+                                    .addValueEventListener(object : ValueEventListener {
+                                        override fun onCancelled(error: DatabaseError) {
+                                            Log.d("onCancelled", error.message)
+                                        }
+
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            val friendNickname = snapshot.value.toString()
+                                            listTitles.add("$friendNickname's list")
+                                        }
+                                    })
+
+                                // Fetch friend's items
                                 val friendGroceryList = ArrayList<GroceryItem>()
                                 groceryLists.add(friendGroceryList)
                                 FirebaseDatabase.getInstance().reference.child("users")
